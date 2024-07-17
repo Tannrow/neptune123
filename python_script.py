@@ -6,6 +6,7 @@ from prophet import Prophet
 import matplotlib.pyplot as plt
 from scikitplot.metrics import plot_roc, plot_precision_recall
 import torch
+import plotly.express as px
 
 # Initialize the Neptune run
 run = neptune.init_run(
@@ -128,6 +129,13 @@ run["forecast_plots"] = npt_utils.create_forecast_plots(model, predicted)
 run["residual_diagnostics_plot"] = npt_utils.create_residual_diagnostics_plots(
     predicted, dataset.y
 )
+
+# Plotly integration
+df_plotly = px.data.iris()
+plotly_fig = px.scatter_3d(
+    df_plotly, x="sepal_length", y="sepal_width", z="petal_width", color="species"
+)
+run["interactive_img"].upload(plotly_fig)
 
 # Stop the run
 run.stop()
