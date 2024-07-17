@@ -11,6 +11,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      NEPTUNE_API_TOKEN: ${{ secrets.NEPTUNE_API_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
@@ -20,4 +22,4 @@ jobs:
       - name: Install dependencies
         run: pip install "neptune[prophet]" plotly matplotlib pandas scikit-plot torch yfinance
       - name: Run your Python script
-        run: python python_script.py
+        run: python your_script.py
