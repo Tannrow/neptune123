@@ -65,8 +65,15 @@ y_pred_proba = ...  # Replace with actual prediction probabilities
 # Ensure y_pred_proba is a 2D array
 import numpy as np
 y_pred_proba = np.array(y_pred_proba)
+
+# Add debugging prints to check the shape and content of y_pred_proba
+print("y_pred_proba shape:", y_pred_proba.shape)
+print("y_pred_proba content:", y_pred_proba)
+
 if y_pred_proba.ndim == 1:
     y_pred_proba = y_pred_proba.reshape(-1, 1)
+elif y_pred_proba.ndim == 0:
+    raise ValueError("y_pred_proba is empty or not correctly formed")
 
 fig, ax = plt.subplots()
 plot_roc(y_test, y_pred_proba, ax=ax)
