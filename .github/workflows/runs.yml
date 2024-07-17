@@ -20,4 +20,4 @@ jobs:
       - name: Install dependencies
         run: pip install "neptune[prophet]" plotly matplotlib pandas scikit-plot torch yfinance
       - name: Run your Python script
-        run: python your_script.py
+        run: python python_script.py
