@@ -7,13 +7,14 @@ import matplotlib.pyplot as plt
 from scikitplot.metrics import plot_roc, plot_precision_recall
 import torch
 import plotly.express as px
+import yfinance as yf
 
 # Initialize the Neptune run
 run = neptune.init_run(
     api_token=os.getenv("NEPTUNE_API_TOKEN"),  # get from your repo secret
     project='tlr62/ST-Runs',
-    name="awesome-woodpecker",
-    tags=["maskRCNN", "finetune"],
+    name="stock-forecasting",
+    tags=["prophet", "stock"],
     source_files=["**/*.py", "config.yaml"],
     dependencies="infer",
     capture_hardware_metrics=False,
@@ -98,17 +99,23 @@ run["model/saved_model"].upload("model.pt")
 # Track dataset artifact
 run["dataset/train"].track_files("./datasets/train/images")
 
-# Prophet integration
-dataset = pd.read_csv(
-    "https://raw.githubusercontent.com/facebook/prophet/main/examples/example_wp_log_peyton_manning.csv"
-)
+# Prophet integration with stock data
+# Fetch stock data
+stock_symbol = 'AAPL'  # Example: Apple Inc.
+stock_data = yf.download(stock_symbol, start='2020-01-01', end='2023-01-01')
+
+# Prepare data for Prophet
+df = stock_data.reset_index()[['Date', 'Close']]
+df.columns = ['ds', 'y']
+
+# Initialize and train Prophet model
 model = Prophet()
-model.fit(dataset)
+model.fit(df)
 
 # Log Prophet summary
 run["prophet_summary"] = npt_utils.create_summary(
     model=model,
-    df=dataset,
+    df=df,
     log_interactive=True
 )
 
@@ -119,7 +126,7 @@ run["model_config"] = npt_utils.get_model_config(model)
 run["model"] = npt_utils.get_serialized_model(model)
 
 # Get forecast components
-predicted = model.predict(dataset)
+predicted = model.predict(df)
 run["forecast_components"] = npt_utils.get_forecast_components(model, predicted)
 
 # Log forecast plots
@@ -127,7 +134,7 @@ run["forecast_plots"] = npt_utils.create_forecast_plots(model, predicted)
 
 # Log residual diagnostics plots
 run["residual_diagnostics_plot"] = npt_utils.create_residual_diagnostics_plots(
-    predicted, dataset.y
+    predicted, df['y']
 )
 
 # Plotly integration
