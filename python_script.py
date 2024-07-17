@@ -49,26 +49,34 @@ for epoch in range(parameters["n_epochs"]):
     loss = ...  # Replace with actual loss calculation
     acc = ...  # Replace with actual accuracy calculation
     
-    run["train/epoch/loss"].append(loss)
-    run["train/epoch/accuracy"].append(acc)
+    run["train/epoch/loss"].append(str(loss))
+    run["train/epoch/accuracy"].append(str(acc))
 
 # Log evaluation results
 eval_acc = ...  # Replace with actual evaluation accuracy
 eval_loss = ...  # Replace with actual evaluation loss
-run["evaluation/accuracy"] = eval_acc
-run["evaluation/loss"] = eval_loss
+run["evaluation/accuracy"] = str(eval_acc)
+run["evaluation/loss"] = str(eval_loss)
 
 # Log ROC and precision-recall curves
 y_test = ...  # Replace with actual test labels
 y_pred_proba = ...  # Replace with actual prediction probabilities
 
+# Ensure y_pred_proba is a 2D array
+import numpy as np
+y_pred_proba = np.array(y_pred_proba)
+if y_pred_proba.ndim == 1:
+    y_pred_proba = y_pred_proba.reshape(-1, 1)
+
 fig, ax = plt.subplots()
 plot_roc(y_test, y_pred_proba, ax=ax)
-run["evaluation/ROC"].upload(fig)
+plt.savefig('roc_curve.png')
+run["evaluation/ROC"].upload('roc_curve.png')
 
 fig, ax = plt.subplots()
 plot_precision_recall(y_test, y_pred_proba, ax=ax)
-run["evaluation/precision-recall"].upload(fig)
+plt.savefig('precision_recall_curve.png')
+run["evaluation/precision-recall"].upload('precision_recall_curve.png')
 
 # Log sample predictions
 sample_predictions = [...]  # Replace with actual sample predictions
