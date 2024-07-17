@@ -31,6 +31,6 @@ jobs:
         with:
           python-version: 3.8
       - name: Install dependencies
-        run: pip install neptune[all] prophet matplotlib pandas scikit-plot torch
+        run: pip install neptune[all] prophet plotly matplotlib pandas scikit-plot torch
       - name: Run your Python script
         run: python your_script.py
