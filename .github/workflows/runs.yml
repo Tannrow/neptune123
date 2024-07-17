@@ -20,7 +20,6 @@ jobs:
           echo Add other actions to build,
           echo test, and deploy your project.
 
-  # This is the neptune-example job
   set-up-neptune:
     runs-on: ubuntu-latest
     env:
@@ -31,6 +30,6 @@ jobs:
         with:
           python-version: 3.8
       - name: Install dependencies
-        run: pip install neptune[all] prophet plotly matplotlib pandas scikit-plot torch
+        run: pip install neptune[all] prophet plotly matplotlib pandas scikit-plot torch yfinance
       - name: Run your Python script
         run: python your_script.py
